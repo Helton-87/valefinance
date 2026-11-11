@@ -1,0 +1,27 @@
+VALE – Gestão Financeira | Painel mobile first
+
+Extraia TODO o ZIP. Abra index.html no navegador ou com o Live Server.
+Mantenha assets e vendor junto dos arquivos HTML, CSS e JavaScript.
+A biblioteca SheetJS 0.20.3 e sua licença estão incluídas; não há CDN em tempo de uso.
+
+1. Apresentação de 1,2 segundo e seleção do Excel (.xlsx/.xls, até 20 MB).
+2. A aba deve chamar CONTAS_A_PAGAR. Colunas pelo nome, em qualquer ordem:
+   Vencimento, Categoria, Descrição, Valor (R$), Status.
+3. Resumo geral e gráfico mensal incluem TODOS os status da base.
+4. Toque no mês para filtrar datas, categorias e lista de despesas.
+5. Hoje = dia atual de São Paulo. 7 dias = hoje e os seis dias seguintes.
+   Mês = mês corrente. Toda a base restaura todo o intervalo do arquivo.
+6. Um único dia mostra só seu subtotal. Mais de um dia também mostra o total do período.
+7. Valores ausentes continuam visíveis como Não informado, sem contribuição aos totais.
+8. Datas ou valores inválidos impedem a importação, com mensagem de erro.
+
+Sem backend: a planilha é lida localmente, sem envio ou alteração do arquivo.
+Dados ficam só na memória e são apagados ao recarregar. Trocar planilha substitui a base em memória.
+A validação por extensão/tamanho é complementada pela leitura real e validação das colunas/dados.
+Nenhuma alteração é gravada no Google Drive.
+
+Arquivos: index.html, styles.css, script.js (interface), finance.js (regras e cálculos), assets/, vendor/.
+Verificado com a BASE_DADOS_BELLANOA fornecida: 255 despesas, 7 valores ausentes,
+R$ 227.014,43 de valores informados; novembro/2026: 74 despesas, R$ 75.321,61.
+Verificações: leitura Excel real, centavos, datas inválidas, reordenação de cabeçalhos,
+filtragem inclusiva e reconciliação de subtotais com o total. Aparência sem teste de navegador nesta entrega.
