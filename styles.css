@@ -1,11 +1,11 @@
 :root {
-  --olive: #526b35;
-  --olive-dark: #3e5228;
-  --ink: #252c20;
-  --muted: #70766b;
-  --paper: #f7f8f4;
-  --line: #e7eade;
-  --soft: #edf1e6;
+  --olive: #0C3265;
+  --olive-dark: #03152B;
+  --ink: #102D4D;
+  --muted: #587594;
+  --paper: #F2F8FD;
+  --line: #D7E6F3;
+  --soft: #E2F1FC;
   font-family: Arial, Helvetica, sans-serif;
   color: var(--ink);
   background: var(--paper);
@@ -109,7 +109,7 @@ h1 em {
   border: 1px solid var(--line);
   border-radius: 22px;
   padding: 28px 24px 23px;
-  box-shadow: 0 10px 34px #34452005;
+  box-shadow: 0 10px 34px #0C32650D;
   text-align: center;
   margin: 100px auto;
 }
@@ -170,7 +170,7 @@ h2 {
   transform: translateY(1px);
 }
 .primary:focus-visible {
-  outline: 3px solid #92ab72;
+  outline: 3px solid #83ACD2;
   outline-offset: 4px;
 }
 .primary svg {
@@ -190,7 +190,7 @@ h2 {
 .note-mark {
   flex: 0 0 18px;
   height: 18px;
-  border: 1px solid #a4ad97;
+  border: 1px solid #83ACD2;
   border-radius: 50%;
   color: var(--olive);
   font-family: Georgia, serif;
@@ -215,7 +215,7 @@ footer {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  color: #969c90;
+  color: #6B8AA9;
   font-size: 9px;
   letter-spacing: 1.2px;
 }
@@ -229,7 +229,7 @@ footer span + span {
 }
 .file-status {
   background: var(--soft);
-  border: 1px solid #d8e2cb;
+  border: 1px solid #B8D9EF;
   border-radius: 10px;
   text-align: left;
   padding: 14px;
@@ -310,7 +310,7 @@ button:disabled {
 }
 button:focus-visible,
 input:focus-visible {
-  outline: 3px solid #91aa74;
+  outline: 3px solid #83ACD2;
   outline-offset: 3px;
 }
 .has-data {
@@ -368,7 +368,7 @@ input:focus-visible {
   font-size: 12px;
 }
 .summary > div > span {
-  color: #e1e8d8;
+  color: #D6EDFF;
   font-size: 11px;
 }
 .panel {
@@ -424,7 +424,7 @@ input:focus-visible {
 }
 .bar {
   width: 100%;
-  background: #a8b991;
+  background: #83ACD2;
   border-radius: 6px 6px 0 0;
 }
 .bar-column[aria-pressed="true"] .bar {
@@ -508,7 +508,7 @@ input:focus-visible {
 .category-rail span {
   height: 100%;
   display: block;
-  background: #9caf84;
+  background: #3974AD;
 }
 .pill {
   background: var(--soft);
@@ -559,8 +559,8 @@ input:focus-visible {
 .status {
   display: inline-block;
   font-size: 9px;
-  background: #f3eee4;
-  color: #79603e;
+  background: #E9F1FA;
+  color: #365F89;
   border-radius: 6px;
   padding: 4px 6px;
 }
@@ -599,8 +599,8 @@ input:focus-visible {
 .notice {
   padding: 12px;
   border-radius: 10px;
-  background: #fbf1d9;
-  color: #765c2f;
+  background: #FFF1D9;
+  color: #765C2F;
   font-size: 12px;
   line-height: 1.6;
 }
@@ -646,3 +646,40 @@ input:focus-visible {
     font-size: 11px;
   }
 }
+
+/* Paleta azul inspirada na referência enviada. */
+:root { color-scheme: light; }
+.splash { background: linear-gradient(180deg,#C5E9FF 0%,#83ACD2 55%,#0C3265 100%); }
+.splash-line { background: #C5E9FF; }
+.header { background: #F8FCFF; }
+.primary { background: #0C3265; box-shadow: 0 5px 15px #0C326520; }
+.primary:hover { background: #03152B; }
+.summary { background: linear-gradient(145deg,#03152B,#0C3265 70%,#3974AD); }
+.summary > div > span { color: #C5E9FF; }
+.panel, .import-card { box-shadow: 0 10px 34px #0C32650A; }
+.bar { background: linear-gradient(180deg,#83ACD2,#3974AD); }
+.bar-column[aria-pressed="true"] .bar { background: linear-gradient(180deg,#3974AD,#0C3265); }
+.category-rail span { background: linear-gradient(90deg,#3974AD,#83ACD2); }
+.status { background: #E9F1FA; color: #365F89; }
+.status.paid { background: #DCEFE8; color: #1E6B53; }
+.subtotal { background: #0C3265; color: #F2F8FD; }
+.shortcuts button[aria-pressed="true"] { background: #0C3265; color: #fff; }
+
+/* Avisos automáticos de vencimento — azul e âmbar discreto. */
+.overdue-panel{margin:18px 0;padding:22px 20px;border:1px solid #E8C8A0;border-left:4px solid #C28740;border-radius:18px;background:linear-gradient(125deg,#FFFCF7,#F7FAFF);box-shadow:0 8px 28px #0C32650C}
+.overdue-heading{display:flex;align-items:center;gap:12px}
+.overdue-icon{width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:#F6E7D1;color:#916021;display:grid;place-items:center;font-weight:700;font-size:18px}
+.overdue-eyebrow{font-size:9px;letter-spacing:1.5px;font-weight:700;color:#95672F}
+.overdue-heading h2{margin:5px 0 0;font-size:23px;color:#17375B}
+.overdue-metrics{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:20px 0 14px}
+.overdue-metrics strong{font-size:clamp(24px,6vw,34px);color:#17375B;font-weight:600}
+.overdue-metrics span{font-size:12px;color:#95672F;font-weight:600}
+.overdue-items{border-top:1px solid #E9DED0;max-height:260px;overflow:auto}
+.overdue-item{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #EEE5D9;font-size:12px}
+.overdue-item>div{min-width:0;display:flex;flex-direction:column;gap:5px}
+.overdue-item strong{overflow-wrap:anywhere;color:#263F5C}
+.overdue-date{font-size:11px;color:#95672F}
+.overdue-amount{text-align:right;white-space:nowrap}
+.overdue-note{font-size:10px;line-height:1.6;color:#727B86;margin:13px 0 0}
+.expense-overdue{border-left:3px solid #C28740;padding-left:11px;background:linear-gradient(90deg,#FFFAF2,transparent 75%)}
+.status.overdue-status{margin-left:6px;background:#F7E7D1;color:#8D5A1D;font-weight:700;letter-spacing:.5px}
