@@ -99,11 +99,11 @@
           </div>
           <p id="source-name" class="muted"></p>
           <p id="import-notice" class="notice" hidden></p>
-          <section class="summary" aria-label="Resumo de toda a base">
-            <span>TOTAL DE DESPESAS CADASTRADAS</span
-            ><strong id="all-total"></strong>
-            <div>
-              <b id="all-count"></b><span>Todos os status · toda a base</span>
+          <section class="summary area-summary" aria-label="Resumo de despesas pendentes">
+            <span>TOTAL A PAGAR · PENDENTE</span>
+            <strong id="all-total" aria-live="polite"></strong>
+            <div class="summary-meta">
+              <b id="all-count"></b><span id="summary-caption">Despesas sem baixa, incluindo atrasadas · toda a base</span>
             </div>
           </section>
           <section id="overdue-panel" class="overdue-panel" aria-label="Pagamentos em atraso" hidden>
@@ -115,7 +115,7 @@
             <div id="overdue-items" class="overdue-items"></div>
             <p class="overdue-note">Considera vencimentos anteriores a hoje sem baixa de pagamento na planilha importada.</p>
           </section>
-          <section class="panel">
+          <section class="panel area-months">
             <div class="section-top">
               <div>
                 <span class="eyebrow">AO LONGO DO TEMPO</span>
@@ -123,19 +123,19 @@
               </div>
               <button id="all-period" class="quiet">Limpar filtro</button>
             </div>
-            <p class="muted">Toque em uma barra para escolher o mês.</p>
+            <p class="muted">Selecione um mês no gráfico para filtrar os vencimentos.</p>
             <div
               id="month-chart"
               class="chart"
               aria-label="Total por mês"
             ></div>
           </section>
-                    <section class="panel">
+                    <section class="panel area-categories">
             <span class="eyebrow">DISTRIBUIÇÃO POR CATEGORIA</span>
             <h2>Despesas por categoria</h2>
             <div id="categories"></div>
           </section>
-          <section class="panel">
+          <section class="panel area-period">
             <span class="eyebrow">ESCOLHA O PERÍODO</span>
             <h2>Quando você quer olhar?</h2>
             <div class="shortcuts">
@@ -159,7 +159,7 @@
             </form>
             <p id="period-label" class="muted" aria-live="polite"></p>
           </section>
-          <section class="panel">
+          <section class="panel area-due">
             <div class="section-top">
               <div>
                 <span class="eyebrow">SEUS VENCIMENTOS</span>
@@ -169,6 +169,12 @@
             </div>
             <div id="expense-list"></div>
             <div id="period-total" class="period-total" hidden></div>
+          </section>
+          <section class="panel area-table" aria-label="Tabela de vencimentos">
+            <div class="section-top"><div><span class="eyebrow">DETALHAMENTO</span><h2>Tabela de vencimentos</h2></div><span id="table-count" class="pill" hidden></span></div>
+            <p class="muted">Valores e códigos conforme a planilha importada.</p>
+            <div class="table-scroll"><table class="due-table"><thead><tr><th>Vencimento</th><th>Nº do título</th><th>Descrição</th><th>Valor</th><th>Código de pagamento (barras ou Pix)</th></tr></thead><tbody id="due-table-body"></tbody></table></div>
+            <p id="table-empty" class="empty">Selecione um período ou mês para visualizar os vencimentos.</p>
           </section>
           <p class="local-note">
             Seus dados ficam neste navegador durante esta sessão.<br>O arquivo
