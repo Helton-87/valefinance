@@ -1,0 +1,12 @@
+# Planilhas importadas localmente
+*.xlsm
+*.xlsx
+*.xls
+*.xlsb
+*.csv
+/modeloSemanal.png
+
+# Configuração local e arquivos temporários
+.env
+.env.*
+node_modules/
