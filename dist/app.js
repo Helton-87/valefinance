@@ -334,14 +334,31 @@ $('mobile-filter-toggle').addEventListener('click', event => {
 });
 $('clear').addEventListener('click', resetFilters);
 $('upload').addEventListener('click', () => $('file').click());
+$('switch-workbook').addEventListener('click', () => {
+  $('welcome-message').hidden = true;
+  $('resume-dashboard').hidden = !($('source').textContent !== 'Nenhuma planilha carregada');
+  document.body.classList.add('awaiting-workbook');
+  window.scrollTo(0, 0);
+});
+$('resume-dashboard').addEventListener('click', () => {
+  document.body.classList.remove('awaiting-workbook');
+  window.scrollTo(0, 0);
+});
+
 $('file').addEventListener('change', async event => {
   const file = event.target.files[0];
   if (!file) return;
   $('message').hidden = false;
   $('message').textContent = 'Lendo a planilha…';
+  $('welcome-message').hidden = false;
+  $('welcome-message').dataset.error = 'false';
+  $('welcome-message').textContent = 'Lendo a planilha…';
   $('upload').disabled = true;
   try {
     const workbook = await openExcel(file);
+    if (!workbook.payables && !workbook.billing) {
+      throw Error('O arquivo não contém as abas esperadas de contas a pagar ou faturamento.');
+    }
     const payableRows = workbook.payables ? workbookRecords(workbook.payables) : [];
     const notes = workbook.billing ? workbookBilling(workbook.billing, workbook.items) : [];
     records = payableRows;
@@ -358,8 +375,15 @@ $('file').addEventListener('change', async event => {
     if (workbook.payables) totals.push(count.format(payableRows.length) + ' lançamentos de contas a pagar');
     if (workbook.billing) totals.push(count.format(notes.length) + ' notas fiscais');
     $('message').textContent = 'Importação concluída. ' + totals.join(' e ') + '.';
+    $('welcome-message').hidden = true;
+    $('resume-dashboard').hidden = false;
+    document.body.classList.remove('awaiting-workbook');
+    window.scrollTo(0, 0);
   } catch (error) {
     $('message').textContent = error instanceof RangeError ? 'Não foi possível ler a estrutura do arquivo Excel.' : error.message || 'Não foi possível importar a planilha.';
+    $('welcome-message').hidden = false;
+    $('welcome-message').dataset.error = 'true';
+    $('welcome-message').textContent = $('message').textContent;
   } finally {
     $('upload').disabled = false;
     event.target.value = '';
