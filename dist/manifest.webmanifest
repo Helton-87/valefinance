@@ -1,0 +1,21 @@
+{
+  "id": "./index.html",
+  "name": "ValeFinance - Gestão Financeira",
+  "short_name": "ValeFinance",
+  "description": "Painel financeiro VALE para análise de contas a pagar e faturamento a partir de planilha Excel.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f6f6",
+  "theme_color": "#26495a",
+  "icons": [
+    {
+      "src": "./logotipo.jpeg",
+      "type": "image/jpeg",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}
