@@ -334,12 +334,11 @@ $('mobile-filter-toggle').addEventListener('click', event => {
 });
 $('clear').addEventListener('click', resetFilters);
 $('upload').addEventListener('click', () => $('file').click());
-$('file').addEventListener('change', async event => {
-  const file = event.target.files[0];
-  if (!file) return;
+async function loadWorkbookFile(file, { restored = false } = {}) {
   $('message').hidden = false;
-  $('message').textContent = 'Lendo a planilha…';
+  $('message').textContent = restored ? 'Restaurando planilha deste dispositivo…' : 'Lendo a planilha…';
   $('upload').disabled = true;
+  $('upload').setAttribute('aria-busy', 'true');
   try {
     const workbook = await openExcel(file);
     const payableRows = workbook.payables ? workbookRecords(workbook.payables) : [];
@@ -351,20 +350,67 @@ $('file').addEventListener('change', async event => {
     $('search').value = '';
     $('billing-search').value = '';
     $('source').textContent = file.name;
+    $('source').title = file.name;
     setOptions();
     setBillingOptions();
     resetFilters();
     const totals = [];
     if (workbook.payables) totals.push(count.format(payableRows.length) + ' lançamentos de contas a pagar');
     if (workbook.billing) totals.push(count.format(notes.length) + ' notas fiscais');
-    $('message').textContent = 'Importação concluída. ' + totals.join(' e ') + '.';
+    $('message').textContent = (restored ? 'Planilha restaurada. ' : 'Importação concluída. ') + totals.join(' e ') + '.';
+    if ($('remember-file').checked && !restored) {
+      try {
+        await localWorkbook.save(file);
+        $('forget-file').hidden = false;
+        $('message').textContent += ' Arquivo guardado somente neste dispositivo.';
+      } catch (error) {
+        $('message').textContent += ' Não foi possível guardar uma cópia local: ' + (error.message || 'armazenamento indisponível') + '.';
+      }
+    } else if (!restored) {
+      try { await localWorkbook.clear(); } catch {}
+      $('forget-file').hidden = true;
+    }
   } catch (error) {
     $('message').textContent = error instanceof RangeError ? 'Não foi possível ler a estrutura do arquivo Excel.' : error.message || 'Não foi possível importar a planilha.';
   } finally {
     $('upload').disabled = false;
-    event.target.value = '';
+    $('upload').removeAttribute('aria-busy');
   }
+}
+$('file').addEventListener('change', async event => {
+  const file = event.target.files[0];
+  if (!file) return;
+  try { await loadWorkbookFile(file); }
+  finally { event.target.value = ''; }
 });
+$('remember-file').addEventListener('change', async event => {
+  if (event.target.checked) return;
+  try {
+    await localWorkbook.clear();
+    $('forget-file').hidden = true;
+    notify('Planilha salva removida deste dispositivo.');
+  } catch { notify('Não foi possível apagar a cópia local.'); }
+});
+$('forget-file').addEventListener('click', async () => {
+  try {
+    await localWorkbook.clear();
+    $('remember-file').checked = false;
+    $('forget-file').hidden = true;
+    notify('Cópia local apagada. A planilha aberta continua visível até sair da página.');
+  } catch { notify('Não foi possível apagar a cópia local.'); }
+});
+async function restoreWorkbookOnStart() {
+  try {
+    const saved = await localWorkbook.read();
+    if (!saved?.file) return;
+    $('remember-file').checked = true;
+    $('forget-file').hidden = false;
+    await loadWorkbookFile(saved.file, { restored: true });
+  } catch {
+    // Navegação privada ou armazenamento indisponível: importação manual continua funcionando.
+  }
+}
 setOptions();
 setBillingOptions();
 render();
+restoreWorkbookOnStart();

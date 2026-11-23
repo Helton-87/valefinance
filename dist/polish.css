@@ -72,3 +72,18 @@ h1{color:#203847;letter-spacing:-.045em}
   .metric strong{font-size:18px}
 }
 @media(prefers-reduced-motion:reduce){.metric,nav button{transition:none}}
+
+
+/* PWA and optional local workbook controls */
+.import-preferences{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;margin:15px 0 4px;padding:12px 15px;background:#fff;border:1px solid var(--line);border-radius:13px}
+.remember-label{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer}
+.remember-label input{width:17px;height:17px;min-height:0;accent-color:var(--accent);cursor:pointer}
+#import-preferences button,#forget-file,#install-app{font:inherit;font-size:12px;border:1px solid var(--line);padding:7px 10px;border-radius:9px;background:var(--soft);color:#006c60;font-weight:700;cursor:pointer}
+.import-note{font-size:11px;color:var(--muted);flex:1 1 250px;line-height:1.4}
+#upload[aria-busy="true"]{opacity:.65;cursor:wait}
+@media(max-width:780px){
+  .import-preferences{gap:9px;padding:12px;margin-top:16px}
+  .remember-label{flex:1 1 100%;font-size:12px}
+  .import-note{flex:1 1 100%;font-size:11px}
+  #forget-file,#install-app{min-height:38px}
+}
