@@ -4,7 +4,22 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Gestão financeira | Contas a pagar</title>
 <link rel="stylesheet" href="style.css?v=9485ef47">
-<body>
+<link rel="stylesheet" href="welcome.css?v=20261123">
+<body class="awaiting-workbook">
+<section class="welcome-screen" aria-labelledby="welcome-title">
+  <div class="welcome-panel">
+    <img src="logotipo.jpeg" alt="Logo da VALE" class="welcome-logo">
+    <p class="welcome-eyebrow">GESTÃO FINANCEIRA</p>
+    <h1 id="welcome-title">Seu painel financeiro</h1>
+    <p class="welcome-description">Selecione sua planilha Excel para acessar seus indicadores, lançamentos e relatórios.</p>
+    <button id="upload" class="welcome-upload" type="button">
+      <span aria-hidden="true">⇧</span> Carregar planilha
+    </button>
+    <p class="welcome-helper">Arquivos Excel .xlsx ou .xlsm</p>
+    <p id="welcome-message" class="welcome-message" role="status" aria-live="polite" hidden></p>
+    <button id="resume-dashboard" class="welcome-resume" type="button" hidden>Voltar ao painel carregado</button>
+  </div>
+</section>
 <aside>
   <div class="brand"><span class="brand-mark" aria-hidden="true"><img src="logotipo.jpeg" alt=""></span><div>Vale<small>Gestão financeira</small></div></div>
   <nav aria-label="Páginas do painel">
@@ -18,7 +33,7 @@
 <main>
   <header>
     <div><p class="eyebrow" id="area">CONTAS A PAGAR</p><h1 id="title">Visão geral</h1><p id="subtitle"></p></div>
-    <div class="source"><span id="source">Nenhuma planilha carregada</span><button id="upload" type="button" title="Importar Excel" aria-label="Importar Excel"><span aria-hidden="true">⇧</span></button></div>
+    <div class="source"><span id="source">Nenhuma planilha carregada</span><button id="switch-workbook" type="button" title="Escolher outra planilha">Trocar planilha</button></div>
     <input id="file" type="file" accept=".xlsx,.xlsm" hidden>
   </header>
   <p id="message" role="status" hidden></p>
