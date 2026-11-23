@@ -229,6 +229,7 @@ function entryTable(rows, title, paginated) {
 
 function render() {
   const isBilling = page === 'billing';
+  $('report-footer').hidden = page !== 'overview';
   const activeFields = isBilling ? [...billingFilters, 'billing-search'] : [...filters, 'search'];
   const activeRange = isBilling ? billingDateRange : dateRange;
   const filterCount = activeFields.filter(field => $(field).value.trim()).length + Number(activeRange.length === 2);
