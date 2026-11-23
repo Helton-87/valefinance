@@ -2,7 +2,14 @@
 <html lang="pt-BR">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Gestão financeira | Contas a pagar</title>
+<title>ValeFinance | Gestão Financeira</title>
+<meta name="theme-color" content="#123f49">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ValeFinance">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="logotipo.jpeg">
 <link rel="stylesheet" href="style.css?v=9485ef47">
 <link rel="stylesheet" href="polish.css?v=20261123">
 <body>
@@ -22,6 +29,12 @@
     <div class="source"><span id="source">Nenhuma planilha carregada</span><button id="upload" type="button" title="Importar planilha Excel" aria-label="Importar planilha Excel"><span aria-hidden="true">⇧</span><span class="upload-label">Importar Excel</span></button></div>
     <input id="file" type="file" accept=".xlsx,.xlsm" hidden>
   </header>
+  <section class="import-preferences" aria-label="Preferências de importação">
+    <label class="remember-label"><input type="checkbox" id="remember-file"> Lembrar planilha neste dispositivo</label>
+    <button id="forget-file" type="button" hidden>Esquecer planilha salva</button>
+    <button id="install-app" type="button" hidden>Instalar aplicativo</button>
+    <span class="import-note">A planilha fica neste navegador, sem envio ao servidor. Evite ativar em dispositivos compartilhados.</span>
+  </section>
   <p id="message" role="status" hidden></p>
   <button id="mobile-filter-toggle" class="mobile-filter-toggle" type="button" aria-controls="dashboard-filters" aria-expanded="false">Filtros <span id="mobile-filter-count"></span></button>
   <section id="dashboard-filters" class="filters" aria-label="Filtros do painel">
@@ -64,8 +77,10 @@
 </main>
 <script src="excel.js"></script>
 <script src="billing.js"></script>
+<script src="persist.js"></script>
 <script src="app.js"></script>
 <script src="calendar.js"></script>
 <script src="report.js"></script>
+<script src="pwa.js"></script>
 </body>
 </html>
