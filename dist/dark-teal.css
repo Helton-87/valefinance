@@ -1,0 +1,174 @@
+/* ValeFinance • Visual dark / graphite / mint inspired by supplied reference.
+   Presentation only: original workbook parsing, filters and chart logic untouched. */
+:root{
+  color-scheme:dark;
+  --ink:#e6f5f2;--accent:#73d8c7;--muted:#a3bcb9;
+  --line:#35504e;--soft:#203d3c;--green:#5ee0bf;
+  --dark:#18332f;--surface:#192d2d;--sidebar:#101b1c;
+  --nav-active:#244740;--field:#1b3433;--ring-empty:#304543;
+  --status-paid:#5ee0bf;--status-pending:#87abc0;
+  --status-overdue:#ff8c87;--status-other:#afbac3;
+}
+html{background:#0d1718}
+body{
+  color:var(--ink);
+  background:
+    radial-gradient(ellipse 60% 40% at 63% 2%,rgba(86,173,165,.19),transparent 75%),
+    linear-gradient(145deg,#132426 0%,#101819 57%,#0b1215 100%);
+  background-attachment:fixed;
+}
+aside{
+  background:linear-gradient(180deg,#152829,#101a1c 70%);
+  border-right:1px solid #335251;
+}
+.brand{color:#f0fbf7;font-weight:750;letter-spacing:.01em}
+.brand small{color:#a1c1bb}
+.brand-mark{border-radius:10px;border:1px solid #466761;background:#fff}
+nav button{color:#a9c5c0;border-radius:11px;transition:background .2s,color .2s}
+nav .nav-icon{color:#9ccbc4;stroke-width:1.55}
+nav button:hover{background:#21403e;color:#f5fffd;--nav-icon-surface:#21403e}
+nav button[aria-current]{background:linear-gradient(110deg,#24564e,#1b3837);color:#d1fff3;box-shadow:inset 2px 0 #7de7d5;--nav-icon-surface:#24564e}
+nav button[aria-current] .nav-icon{color:#7ee9d0}
+main{position:relative}
+.eyebrow{color:#85ead1}
+h1,h2,.panel h2{color:#ecfbf7;letter-spacing:-.04em}
+#subtitle,.source,.muted,.metric span,.metric small,.panel p{color:#a9c2bc}
+.filters,.panel,.metric{
+  color:#e1f5f0;
+  background:linear-gradient(155deg,rgba(29,54,53,.97),rgba(21,38,40,.98));
+  border:1px solid rgba(122,193,182,.19);
+  border-radius:17px;
+  box-shadow:0 12px 30px #020c0e28,inset 0 1px rgba(194,249,238,.035);
+}
+.metric{position:relative;overflow:hidden;transition:transform .18s,border-color .18s}
+.metric:first-child{
+  background:linear-gradient(127deg,#214f49 0%,#1c393a 70%);
+  border-color:#477e72;
+}
+.metric:first-child::before{
+  content:"";position:absolute;inset:-80px -55px auto auto;width:180px;height:180px;
+  background:radial-gradient(circle,#76e9c528,transparent 68%);pointer-events:none
+}
+.metric:hover,.metric.active{transform:translateY(-1px);border-color:#70bfae;background:#254e47}
+.billing-metrics .metric:hover{background:#24443f;border-color:#60988d}
+.billing-metrics .metric:first-child:hover{background:#29544d}
+.metric strong{color:#f1fffb;font-variant-numeric:tabular-nums}
+.metric[data-status="Pago"] strong{color:#80efd3}
+.metric[data-status="Vencido"] strong{color:#ff9b93}
+#date-label,.filters label{color:#b8d2cc}
+.filters input,.filters select,#date-toggle,.source button,#clear{
+  background:#142a2a;color:#e7faf5;border:1px solid #45625e;border-radius:9px;
+}
+.filters input::placeholder{color:#90aaa4}
+.filters select option{background:#1b3030;color:#ecf9f5}
+#date-toggle:hover,.source button:hover,#clear:hover{background:#284943}
+#date-calendar{
+  background:#182f2e;color:#e8fcf6;border:1px solid #4c746a;
+  box-shadow:0 20px 50px #0008;
+}
+#date-calendar button{color:#d7f7ed}
+#date-calendar button:hover{background:#31584f}
+#date-days button[aria-pressed="true"]{background:#5cd5b8;color:#0b2420}
+.report-actions,.report-files{color:#aecbc5}
+#report-export,.report-files a{
+  background:#21463e;color:#cffff0;border:1px solid #427a6d;border-radius:9px
+}
+#report-export:not(:disabled):hover,.report-files a:hover{background:#2d6757}
+#report-export:disabled{background:#1b2b2d;color:#7f9693;border-color:#324643}
+.bar,.status-legend-row{color:#e0f7f0;background:transparent}
+.bar:hover,.bar[aria-pressed="true"],.status-legend-row:hover,.status-legend-row[aria-pressed="true"]{
+  background:#284844
+}
+.track{background:#304b48}
+.fill{background:linear-gradient(90deg,#3c9e91,#75e5ca)}
+.period-bars .fill{background:linear-gradient(0deg,#3b948b,#8cebd2)}
+.period-bars .bar:hover,.period-bars .bar[aria-pressed="true"]{background:#274841}
+.period-empty,.period-bars{
+  background-image:repeating-linear-gradient(to top,transparent 0 42px,#304745 42px 43px)
+}
+.period-empty p{background:#192d2d}
+.status-ring>div{background:#1b3230}
+.status-ring small,.status-legend-row{color:#aec7c0}
+.table-wrap{border-radius:12px;overflow:auto}
+th{background:#24403e;color:#d1ede6}
+td,th{border-bottom:1px solid #35504b}
+tbody tr:hover{background:#23413e}
+.cell-button,.copy{
+  background:#294f47;color:#b6ffea;border:1px solid #3b695c;border-radius:8px
+}
+.cell-button:hover,.copy:hover{background:#32685b}
+.pill{background:#294c51;color:#daeff7}
+.pill[data-value="Pago"]{background:#214d41;color:#8cffe0}
+.pill[data-value="Vencido"]{background:#593433;color:#ffaea7}
+.pagination button{background:#24423d;border-color:#45695e;color:#c2f9eb}
+#message{color:#baf6e7;background:#193e37;border:1px solid #397668}
+#toast:not(:empty){background:#204941;color:#ebfff7;border:1px solid #468673}
+:focus-visible{outline:2px solid #92f4df;outline-offset:3px}
+.mobile-filter-toggle{background:#1b3734;color:#e1faf2;border-color:#456b61}
+.mobile-filter-toggle:hover{background:#255047}
+
+/* Welcome screen: same art direction, without requiring any external media. */
+body.awaiting-workbook{
+  background:
+    radial-gradient(ellipse 72% 55% at 5% 7%,rgba(113,199,194,.46),transparent 70%),
+    radial-gradient(ellipse 65% 48% at 91% 93%,rgba(47,126,123,.28),transparent 75%),
+    linear-gradient(132deg,#1d3c3c 0%,#111b1f 48%,#101315 100%);
+}
+body.awaiting-workbook > .welcome-screen{
+  position:relative;isolation:isolate;overflow:hidden;
+}
+body.awaiting-workbook > .welcome-screen::before{
+  content:"VALE";position:absolute;z-index:-1;pointer-events:none;white-space:nowrap;
+  font-size:clamp(115px,28vw,440px);font-weight:800;letter-spacing:-.09em;
+  color:transparent;-webkit-text-stroke:1px rgba(134,230,220,.19);
+  top:12%;left:50%;transform:translateX(-50%);
+}
+.welcome-panel{
+  background:linear-gradient(155deg,rgba(24,46,46,.89),rgba(14,27,30,.96));
+  border:1px solid rgba(139,234,216,.3);
+  border-radius:25px;box-shadow:0 25px 85px #020b1070,0 0 50px #51bba91b;
+  backdrop-filter:blur(16px);
+  padding:clamp(27px,5vw,48px);
+}
+.welcome-logo{
+  background:#fff;border-radius:17px;
+  padding:14px 18px;width:min(100%,305px);max-height:160px;
+  margin-bottom:29px;box-shadow:0 12px 40px #020e1545
+}
+.welcome-eyebrow{color:#8cebd8;letter-spacing:.2em}
+.welcome-panel h1{color:#f0fffa}
+.welcome-description,.welcome-helper{color:#b5d0c9}
+.welcome-upload{
+  background:linear-gradient(100deg,#66d4bd,#93ebd8);
+  color:#0e302c;border:1px solid #9aeedb;border-radius:13px;
+  box-shadow:0 8px 28px #47b9a34f;font-weight:800;
+}
+.welcome-upload span{color:#124e43}
+.welcome-upload:hover{background:linear-gradient(100deg,#79e5ca,#b5f6e7)}
+.welcome-message{background:#203d39;color:#d7fdf2;border-color:#4e8074}
+.welcome-message[data-error="true"]{background:#4c2b2d;color:#ffe2dd;border-color:#8e4c48}
+.welcome-resume{color:#9ef4df}
+#switch-workbook{background:#1b3432;color:#d8f9ee;border:1px solid #50786c}
+#switch-workbook:hover{background:#2b554c}
+@media(max-width:780px){
+  aside{background:#142323;border-bottom-color:#35514b}
+  aside nav{background:#132524;border-top:1px solid #3c5b54;box-shadow:0 -10px 30px #050d10a8}
+  aside nav button{color:#b2cfc7}
+  aside nav button[aria-current]{background:#285148;color:#a5ffdf;box-shadow:inset 0 2px #77e5cc}
+  main{background:transparent}
+  .metrics,.billing-metrics{gap:10px}
+  .metric,.panel{border-radius:14px}
+  .mobile-filter-toggle{background:#1b3332;border-radius:12px}
+  .filters,.filters.billing-filters{background:#192e2e}
+  .welcome-panel{border-radius:21px;padding:34px 23px}
+  .welcome-logo{width:min(100%,270px)}
+  #toast:not(:empty){box-shadow:0 15px 35px #020b0daa}
+}
+@media(max-width:490px){
+  .welcome-panel h1{font-size:27px}
+  .welcome-panel{padding:30px 19px}
+}
+@media(prefers-reduced-motion:reduce){
+  nav button,.metric{transition:none}
+  .metric:hover{transform:none}
+}
