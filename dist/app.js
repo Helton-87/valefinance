@@ -367,7 +367,8 @@ $('file').addEventListener('change', async event => {
     const totals = [];
     if (workbook.payables) totals.push(count.format(payableRows.length) + ' lançamentos de contas a pagar');
     if (workbook.billing) totals.push(count.format(notes.length) + ' notas fiscais');
-    $('message').textContent = 'Importação concluída. ' + totals.join(' e ') + '.';
+    // Não exibir o resumo técnico de importação no dashboard.
+    $('message').hidden = true;
     $('welcome-message').hidden = true;
     $('resume-dashboard').hidden = false;
     document.body.classList.remove('awaiting-workbook');
