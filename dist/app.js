@@ -229,7 +229,6 @@ function entryTable(rows, title, paginated) {
 
 function render() {
   const isBilling = page === 'billing';
-  $('report-footer').hidden = page !== 'overview';
   const activeFields = isBilling ? [...billingFilters, 'billing-search'] : [...filters, 'search'];
   const activeRange = isBilling ? billingDateRange : dateRange;
   const filterCount = activeFields.filter(field => $(field).value.trim()).length + Number(activeRange.length === 2);
@@ -237,6 +236,8 @@ function render() {
   $('date-filter').parentElement.classList.toggle('billing-filters', isBilling);
   for (const element of document.querySelectorAll('[data-payables]')) element.hidden = isBilling;
   for (const element of document.querySelectorAll('[data-billing]')) element.hidden = !isBilling;
+  // Visibilidade independente: somente a aba Visão geral exibe a exportação.
+  $('report-footer').hidden = page !== 'overview';
   $('area').textContent = isBilling ? 'GESTÃO FISCAL' : 'CONTAS A PAGAR';
   $('date-label').textContent = isBilling ? 'Emissão' : 'Vencimento';
   $('date-calendar').setAttribute('aria-label', isBilling ? 'Calendário de emissão' : 'Calendário de vencimentos');
