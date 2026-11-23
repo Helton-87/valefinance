@@ -1,5 +1,5 @@
 /* PWA isolado: NUNCA armazena planilhas Excel. */
-const CACHE_NAME = 'valefinance-pwa-20261123-sky6';
+const CACHE_NAME = 'valefinance-pwa-20261123-whatsapp7';
 const SHELL = [
   './index.html', './style.css', './welcome.css', './dark-teal.css', './sky-blue.css',
   './excel.js', './billing.js', './app.js', './calendar.js',
