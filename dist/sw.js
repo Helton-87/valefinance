@@ -1,6 +1,6 @@
 /* Somente recursos do aplicativo. Arquivos Excel não são armazenados pelo service worker. */
-const CACHE = 'valefinance-shell-20261123-v2';
-const ASSETS = ['./index.html','./style.css','./polish.css','./excel.js','./billing.js','./app.js','./calendar.js','./report.js','./persist.js','./pwa.js','./icon.svg','./logotipo.jpeg','./manifest.webmanifest'];
+const CACHE = 'valefinance-shell-20261123-v3';
+const ASSETS = ['./index.html','./style.css','./polish.css','./excel.js','./billing.js','./app.js','./calendar.js','./report.js','./pwa.js','./icon.svg','./logotipo.jpeg','./manifest.webmanifest'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
