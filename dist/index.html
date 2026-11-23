@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="./logotipo.jpeg">
 <link rel="stylesheet" href="style.css?v=pwa20261123">
 <link rel="stylesheet" href="welcome.css?v=pwa20261123">
-<link rel="stylesheet" href="dark-teal.css?v=dark20261123">
+<link rel="stylesheet" href="dark-teal.css?v=navfooter20261123">
 <body class="awaiting-workbook">
 <section class="welcome-screen" aria-labelledby="welcome-title">
   <div class="welcome-panel">
@@ -33,8 +33,6 @@
   <div class="brand"><span class="brand-mark" aria-hidden="true"><img src="logotipo.jpeg" alt=""></span><div>Vale<small>Gestão financeira</small></div></div>
   <nav aria-label="Páginas do painel">
     <button data-page="overview" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="16" height="20" rx="2.5"/><circle cx="5.4" cy="8" r="3.6" fill="var(--nav-icon-surface)"/><path d="m3 10.6-1.5 2M11 11V8h2v3m2 0V5h2v6m2 0V7h1v4M9 15h3m-3 3h3"/><circle cx="17" cy="17.4" r="3.3"/><path d="M17 14.1v3.3h3.3"/></svg> Visão geral</button>
-    <button data-page="category"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="7.5" height="7.5" rx="1.5"/><rect x="14" y="2.5" width="7.5" height="7.5" rx="1.5"/><rect x="2.5" y="14" width="7.5" height="7.5" rx="1.5"/><rect x="14" y="14" width="7.5" height="7.5" rx="1.5"/></svg> Categorias</button>
-    <button data-page="supplier"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 1.5 3 1.8v3.4L12 8.5 9 6.7V3.3l3-1.8Zm0 3.6v3.4M9 3.3l3 1.8 3-1.8M4.1 6.4l2.8 1.7v3.2l-2.8 1.8-2.8-1.8V8.1l2.8-1.7Zm0 3.4v3.3M1.3 8.1l2.8 1.7 2.8-1.7m13-1.7 2.8 1.7v3.2l-2.8 1.8-2.8-1.8V8.1l2.8-1.7Zm0 3.4v3.3m-2.8-5 2.8 1.7 2.8-1.7M12 10v2.3M4.7 15l2 1.4m12.6-1.4-2 1.4M12 13.4l4.5 2.6v4.7L12 23.2l-4.5-2.5V16l4.5-2.6Zm0 5.1v4.7M7.5 16l4.5 2.5 4.5-2.5"/></svg> Fornecedores</button>
     <button data-page="entries"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6V3h11l4 4v14h-5M17 3v4h4m-8 2h5m-4 3h4m-3 3h3M8 10h4m-5 2h4"/><circle cx="8.5" cy="12.5" r="5.5"/><path d="m12.5 16.4 5 4.8a1.5 1.5 0 0 1-2.1 2.1l-5-4.9M4 18.5v1.8A1.7 1.7 0 0 0 5.7 22h5"/></svg> Lançamentos</button>
     <button data-page="billing"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M3.1 16.4a10 10 0 0 1 16.1-10.8m0 0V2.5m0 3.1-3.2-.2m4.9 2.2A10 10 0 0 1 4.8 18.4m0 0v3.1m0-3.1 3.2.2"/><circle cx="12" cy="12" r="5.8"/><path d="M13.6 10.1a1.8 1.8 0 0 0-1.6-.8c-2.1 0-2.1 2.5 0 2.7 2.1.2 2.1 2.7 0 2.7a2 2 0 0 1-1.8-.9m1.8-5.4v.9m0 5.4v.9"/></svg> Faturamento</button>
   </nav>
@@ -77,17 +75,19 @@
     <label data-billing hidden>Buscar<input id="billing-search" type="search" placeholder="Nota ou destinatário"></label>
     <button id="clear" type="button">Limpar filtros</button>
   </section>
-  <div class="report-actions" data-payables>
-    <span id="report-hint">Selecione um período.</span>
-    <button id="report-export" type="button" disabled>Exportar para WhatsApp</button>
-  </div>
-  <div id="report-files" class="report-files" aria-live="polite" data-payables></div>
   <section id="content" aria-label="Resultados"></section>
+  <footer class="dashboard-footer" aria-label="Exportação de relatórios" data-payables>
+    <div class="report-actions">
+      <span id="report-hint">Selecione um período.</span>
+      <button id="report-export" type="button" disabled>Exportar para WhatsApp</button>
+    </div>
+    <div id="report-files" class="report-files" aria-live="polite"></div>
+  </footer>
   <div id="toast" role="status" aria-live="polite"></div>
 </main>
 <script src="excel.js?v=pwa20261123"></script>
 <script src="billing.js?v=pwa20261123"></script>
-<script src="app.js?v=pwa20261123"></script>
+<script src="app.js?v=navfooter20261123"></script>
 <script src="calendar.js?v=pwa20261123"></script>
 <script src="report.js?v=pwa20261123"></script>
 <script src="pwa.js?v=pwa20261123"></script>
