@@ -2,16 +2,8 @@
 <html lang="pt-BR">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ValeFinance | Gestão Financeira</title>
-<meta name="theme-color" content="#123f49">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="ValeFinance">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/jpeg" href="logotipo.jpeg">
-<link rel="apple-touch-icon" href="logotipo.jpeg">
-<link rel="stylesheet" href="style.css?v=20261123fix4">
-<link rel="stylesheet" href="polish.css?v=20261123fix4">
+<title>Gestão financeira | Contas a pagar</title>
+<link rel="stylesheet" href="style.css?v=9485ef47">
 <body>
 <aside>
   <div class="brand"><span class="brand-mark" aria-hidden="true"><img src="logotipo.jpeg" alt=""></span><div>Vale<small>Gestão financeira</small></div></div>
@@ -26,7 +18,7 @@
 <main>
   <header>
     <div><p class="eyebrow" id="area">CONTAS A PAGAR</p><h1 id="title">Visão geral</h1><p id="subtitle"></p></div>
-    <div class="source"><span id="source">Nenhuma planilha carregada</span><button id="install-app" type="button" hidden>Instalar</button><button id="upload" type="button" title="Importar planilha Excel" aria-label="Importar planilha Excel"><span aria-hidden="true">⇧</span><span class="upload-label">Importar Excel</span></button></div>
+    <div class="source"><span id="source">Nenhuma planilha carregada</span><button id="upload" type="button" title="Importar Excel" aria-label="Importar Excel"><span aria-hidden="true">⇧</span></button></div>
     <input id="file" type="file" accept=".xlsx,.xlsm" hidden>
   </header>
   <p id="message" role="status" hidden></p>
@@ -69,11 +61,10 @@
   <section id="content" aria-label="Resultados"></section>
   <div id="toast" role="status" aria-live="polite"></div>
 </main>
-<script src="excel.js?v=20261123fix4"></script>
-<script src="billing.js?v=20261123fix4"></script>
-<script src="app.js?v=20261123fix4"></script>
-<script src="calendar.js?v=20261123fix4"></script>
-<script src="report.js?v=20261123fix4"></script>
-<script src="pwa.js?v=20261123fix4"></script>
+<script src="excel.js"></script>
+<script src="billing.js"></script>
+<script src="app.js"></script>
+<script src="calendar.js"></script>
+<script src="report.js"></script>
 </body>
 </html>
