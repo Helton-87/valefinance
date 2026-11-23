@@ -172,3 +172,27 @@ body.awaiting-workbook > .welcome-screen::before{
   nav button,.metric{transition:none}
   .metric:hover{transform:none}
 }
+
+/* Navegação enxuta e exportação no fim da área financeira. */
+.dashboard-footer{
+  margin-top:24px;
+  padding:18px 20px;
+  background:linear-gradient(155deg,rgba(29,54,53,.97),rgba(21,38,40,.98));
+  border:1px solid rgba(122,193,182,.19);
+  border-radius:17px;
+  box-shadow:0 12px 30px #020c0e28;
+}
+.dashboard-footer .report-actions{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin:0;flex-wrap:wrap;
+}
+.dashboard-footer .report-files{margin:10px 0 0}
+.dashboard-footer .report-files:empty{display:none}
+.dashboard-footer #report-export{min-height:44px;padding:10px 16px}
+@media(max-width:780px){
+  aside nav{grid-template-columns:repeat(3,minmax(0,1fr))}
+  aside nav button{font-size:clamp(11px,2.7vw,13px)}
+  .dashboard-footer{margin-top:18px;padding:14px;border-radius:14px}
+  .dashboard-footer .report-actions{align-items:stretch}
+  .dashboard-footer #report-export{flex:1 1 100%}
+}

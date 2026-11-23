@@ -9,8 +9,6 @@ const pageSize = 25;
 const unknownSupplier = 'Fornecedor sem nome';
 const descriptions = {
   overview: ['Visão geral', 'Acompanhe os valores, vencimentos e pagamentos da carteira.'],
-  category: ['Categorias', 'Compare os valores por categoria e consulte seus lançamentos.'],
-  supplier: ['Fornecedores', 'Acompanhe o volume e os pagamentos de cada fornecedor.'],
   entries: ['Lançamentos', 'Consulte os registros e clique em um código de pagamento para copiá-lo.'],
   billing: ['Faturamento', 'Acompanhe as vendas, devoluções e notas fiscais por data de emissão.']
 };
@@ -247,7 +245,7 @@ function render() {
   $('report-files').replaceChildren();
   $('title').textContent = descriptions[page][0];
   $('subtitle').textContent = descriptions[page][1];
-  $('upload').hidden = page !== 'overview' && !isBilling;
+  // O botão de carregar pertence à tela inicial e deve funcionar em qualquer aba.
   for (const button of document.querySelectorAll('nav button')) {
     if (button.dataset.page === page) button.setAttribute('aria-current', 'page');
     else button.removeAttribute('aria-current');
@@ -256,20 +254,15 @@ function render() {
     $('content').innerHTML = billingView();
     return;
   }
-  const filtered = selectedRows();
-  const rows = page === 'supplier' ? filtered.filter(item => item.supplier) : filtered;
+  const rows = selectedRows();
   if (page === 'entries') {
     $('content').innerHTML = entryTable(rows, 'Todos os lançamentos', true);
-  } else if (page === 'overview') {
+  } else {
     $('content').innerHTML = metrics(rows) +
       '<div class="grid overview-charts">' + chart('Valor por competência', 'month', grouped(rows, 'month', true)) +
       statusChart(rows) + '</div>' +
       '<div class="grid overview-breakdown">' + chart('Valor por categoria', 'category', grouped(rows, 'category')) +
-      chart('Principais fornecedores', 'supplier', grouped(rows, 'supplier').slice(0, 6)) + '</div>' +
-      entryTable(rows, 'Lançamentos por vencimento', false);
-  } else {
-    const groups = grouped(rows, page);
-    $('content').innerHTML = metrics(rows) + groupTable(page, groups) + entryTable(rows, 'Lançamentos detalhados', true);
+      chart('Principais fornecedores', 'supplier', grouped(rows, 'supplier').slice(0, 6)) + '</div>';
   }
 }
 
