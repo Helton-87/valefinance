@@ -329,12 +329,6 @@ $('mobile-filter-toggle').addEventListener('click', event => {
 });
 $('clear').addEventListener('click', resetFilters);
 $('upload').addEventListener('click', () => $('file').click());
-$('switch-workbook').addEventListener('click', () => {
-  $('welcome-message').hidden = true;
-  $('resume-dashboard').hidden = !($('source').textContent !== 'Nenhuma planilha carregada');
-  document.body.classList.add('awaiting-workbook');
-  window.scrollTo(0, 0);
-});
 $('resume-dashboard').addEventListener('click', () => {
   document.body.classList.remove('awaiting-workbook');
   window.scrollTo(0, 0);
