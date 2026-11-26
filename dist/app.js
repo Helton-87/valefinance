@@ -7,8 +7,11 @@ const compare = new Intl.Collator('pt-BR', { numeric: true, sensitivity: 'base' 
 const filters = ['month', 'category', 'supplier', 'status'];
 const pageSize = 25;
 const unknownSupplier = 'Fornecedor sem nome';
-const pageTitles = { overview: 'Home', entries: 'Lançamentos', billing: 'Faturamento' };
-let overviewMonth = '';
+const descriptions = {
+  overview: ['Visão geral', 'Acompanhe os valores, vencimentos e pagamentos da carteira.'],
+  entries: ['Lançamentos', 'Consulte os registros e clique em um código de pagamento para copiá-lo.'],
+  billing: ['Faturamento', 'Acompanhe as vendas, devoluções e notas fiscais por data de emissão.']
+};
 let records = [];
 let dateRange = [];
 let page = 'overview';
@@ -65,7 +68,7 @@ function monthValue(raw, date, epoch1904) {
 function workbookRecords({ rows, headers, epoch1904 }) {
   const columns = {
     date: ['vencimento', 'datadevencimento', 'data'], month: ['mes', 'competencia'],
-    description: ['descricao'], supplier: ['fornecedor', 'nomedofornecedor'], category: ['categoria'], title: ['numerodotitulo', 'titulo'],
+    description: ['descricao'], category: ['categoria'], title: ['numerodotitulo', 'titulo'],
     value: ['valorr', 'valor'], paidValue: ['valorpagor', 'valorpago'], paidDate: ['datadopagamento'],
     status: ['status'], code: ['codigodepagamentobarrasoupix', 'codigodepagamento']
   };
@@ -75,7 +78,7 @@ function workbookRecords({ rows, headers, epoch1904 }) {
     const value = numeric(item.value);
     if (value === null && !item.description && !item.title) return [];
     const date = dateValue(item.date, epoch1904);
-    const supplier = item.supplier || (/^fornecedore?s?$/.test(fold(item.category)) ? item.description || unknownSupplier : '');
+    const supplier = /^fornecedore?s?$/.test(fold(item.category)) ? item.description || unknownSupplier : '';
     const statusKey = fold(item.status);
     const paid = ['pago', 'paga', 'quitado', 'quitada', 'liquidado', 'liquidada'].includes(statusKey) || (!statusKey && Boolean(dateValue(item.paidDate, epoch1904)));
     const pending = ['', 'pendente', 'em aberto', 'aberto', 'a pagar'].includes(statusKey);
@@ -164,93 +167,68 @@ function chart(title, field, groups, footer = '') {
   return `<article class="panel ${byMonth ? 'period-panel' : ''}"><h2>${title}</h2>${bars ? '<div class="bars ' + (byMonth ? 'period-bars' : '') + '">' + bars + '</div>' : empty}${footer ? `<p><strong>${escapeHtml(footer)}</strong></p>` : ''}</article>`;
 }
 
+function statusChart(rows) {
+  const groups = grouped(rows, 'status');
+  const colors = { Pago: 'var(--status-paid)', Pendente: 'var(--status-pending)', Vencido: 'var(--status-overdue)' };
+  const totalWeight = groups.reduce((sum, group) => sum + Math.abs(group.value), 0);
+  let angle = 0;
+  const segments = groups.map(group => {
+    const color = Object.hasOwn(colors, group.key) ? colors[group.key] : 'var(--status-other)';
+    const start = angle;
+    angle += totalWeight ? Math.abs(group.value) / totalWeight * 360 : 0;
+    return { ...group, color, stop: color + ' ' + start + 'deg ' + angle + 'deg' };
+  });
+  const ring = !totalWeight ? 'var(--ring-empty)' : segments.length === 1 ? segments[0].color
+    : 'conic-gradient(' + segments.map(item => item.stop).join(',') + ')';
+  const legend = segments.map(item => `<button class="status-legend-row" data-filter="status" data-value="${escapeHtml(item.key)}" aria-pressed="${$('status').value === item.key}"><span class="legend-dot" style="--status-color:${item.color}" aria-hidden="true"></span><span>${escapeHtml(item.key)}</span><strong>${money.format(item.value)}</strong></button>`).join('');
+  return `<article class="panel status-panel"><h2>Valor por status</h2>
+    <div class="status-ring" style="--status-ring:${ring}" aria-hidden="true"><div><small>Total</small><strong>${money.format(summarize(rows).value)}</strong></div></div>
+    <div class="status-legend">${legend || '<p class="muted">Sem dados para estes filtros.</p>'}</div>
+  </article>`;
+}
+
 function metrics(rows) {
   const total = summarize(rows);
   const cards = [
-    ['Despesas a pagar', total.open, ''],
-    ['Despesas pagas', total.paid, 'Pago'],
-    ['Despesas atrasadas', total.overdue, 'Vencido']
+    ['Valor total', total.value, count.format(rows.length) + ' lançamentos', ''],
+    ['A vencer', total.open - total.overdue, 'Saldo pendente', 'Pendente'],
+    ['Vencido', total.overdue, 'Saldo em atraso', 'Vencido'],
+    ['Valor pago', total.paid, 'Pagamentos registrados', 'Pago']
   ];
-  return `<div class="metrics overview-metrics">${cards.map(([name, value, status]) =>
-    `<article class="metric" data-status="${status}"><small>${name}</small><strong>${money.format(value)}</strong></article>`).join('')}</div>`;
+  return `<div class="metrics">${cards.map(([name, value, detail, status]) => `<button class="metric ${status && $('status').value === status ? 'active' : ''}" data-filter="status" data-status="${status}" data-value="${status}" aria-pressed="${Boolean(status && $('status').value === status)}"><small>${name}</small><strong>${money.format(value)}</strong><span>${detail}</span></button>`).join('')}</div>`;
 }
 
-function expenseTimeline(rows) {
-  const dated = rows.filter(item => item.date);
-  const months = grouped(dated.map(item => ({ ...item, dueMonth: item.date.slice(0, 7) })), 'dueMonth', true);
-  const selected = months.find(month => month.key === overviewMonth);
-  const options = months.map(({ key }) => `<option value="${key}" ${key === overviewMonth ? 'selected' : ''}>${escapeHtml(labelFor('month', key))}</option>`).join('');
-  let periods = months.map(({ key, value }) => ({ label: labelFor('month', key), value }));
-  if (selected) {
-    const [year, month] = selected.key.split('-').map(Number);
-    const days = new Date(Date.UTC(year, month, 0)).getUTCDate();
-    const totals = new Map(grouped(selected.items, 'date').map(({ key, value }) => [Number(key.slice(-2)), value]));
-    periods = Array.from({ length: days }, (_, index) => ({ label: String(index + 1), value: totals.get(index + 1) ?? 0 }));
-  }
-  const heading = `<div class="card-heading"><h2>Despesas por vencimento</h2>
-    <label>Mês<select id="overview-month"><option value="">Visão mensal</option>${options}</select></label></div>`;
-  if (!periods.length) return `<article class="panel timeline">${heading}<p class="muted">Sem lançamentos com vencimento informado.</p></article>`;
-
-  const width = Math.max(560, periods.length * (selected ? 29 : 85) + 120);
-  const left = 112;
-  const step = (width - left - 12) / periods.length;
-  const low = Math.min(0, ...periods.map(period => period.value));
-  const high = Math.max(0, ...periods.map(period => period.value)) || (low ? 0 : 1);
-  const y = value => 18 + (high - value) / (high - low) * 154;
-  const grid = Array.from({ length: 5 }, (_, index) => {
-    const value = high - (high - low) * index / 4;
-    const height = y(value);
-    return `<line x1="${left}" x2="${width - 8}" y1="${height}" y2="${height}"/><text x="${left - 8}" y="${height}" text-anchor="end" dominant-baseline="middle">${money.format(value)}</text>`;
-  }).join('');
-  const points = periods.map((period, index) => ({ ...period, x: left + step * (index + .5), y: y(period.value) }));
-  const marks = points.map(point => {
-    const title = `<title>${escapeHtml(point.label)}: ${money.format(point.value)}</title>`;
-    const mark = selected
-      ? `<rect x="${point.x - step * .3}" y="${Math.min(point.y, y(0))}" width="${step * .6}" height="${Math.max(1, Math.abs(y(0) - point.y))}" rx="2">${title}</rect>`
-      : `<circle cx="${point.x}" cy="${point.y}" r="4">${title}</circle>`;
-    return mark + `<text x="${point.x}" y="196" text-anchor="middle">${escapeHtml(point.label)}</text>`;
-  }).join('');
-  const curve = points.slice(1).reduce((path, point, index) => {
-    const previous = points[index];
-    const middle = (previous.x + point.x) / 2;
-    return `${path} C ${middle} ${previous.y}, ${middle} ${point.y}, ${point.x} ${point.y}`;
-  }, `M ${points[0].x} ${points[0].y}`);
-  const summary = points.map(({ label, value }) => `${label}: ${money.format(value)}`).join(', ');
-  return `<article class="panel timeline">${heading}<div class="timeline-scroll" tabindex="0" role="region" aria-label="Gráfico de despesas">
-    <svg viewBox="0 0 ${width} 210" style="min-width:${width}px" role="img" aria-label="${escapeHtml(summary)}">
-      ${grid}${selected ? '' : `<path d="${curve}"/>`}${marks}
-    </svg></div></article>`;
+function groupTable(field, groups) {
+  return `<section class="panel"><h2>${field === 'supplier' ? 'Resumo por fornecedor' : 'Resumo por categoria'}</h2>
+    <p class="mobile-table-hint">Deslize a tabela para ver mais colunas.</p><div class="table-wrap"><table><thead><tr><th>${field === 'supplier' ? 'Fornecedor' : 'Categoria'}</th><th>Lançamentos</th><th>Total</th><th>Em aberto</th><th>Vencido</th><th>Pago</th></tr></thead>
+    <tbody>${groups.map(group => `<tr><td><button class="cell-button" data-filter="${field}" data-value="${escapeHtml(group.key)}">${escapeHtml(group.key)}</button></td><td>${count.format(group.items.length)}</td>${[group.value, group.open, group.overdue, group.paid].map(value => `<td class="money">${money.format(value)}</td>`).join('')}</tr>`).join('') || '<tr><td colspan="6">Sem dados para estes filtros.</td></tr>'}</tbody></table></div></section>`;
 }
 
-function entryTable(rows, title) {
+function entryTable(rows, title, paginated) {
   const ordered = [...rows].sort((a, b) => compare(a.date || '9999', b.date || '9999') || compare(a.title, b.title));
   const pages = Math.max(1, Math.ceil(rows.length / pageSize));
   tablePage = Math.min(tablePage, pages - 1);
-  const visible = ordered.slice(tablePage * pageSize, (tablePage + 1) * pageSize);
+  const visible = paginated ? ordered.slice(tablePage * pageSize, (tablePage + 1) * pageSize) : ordered.slice(0, 6);
   const body = visible.map(item => {
     const status = currentStatus(item);
     return `<tr>
       <td class="date">${item.date ? dateFormat.format(new Date(item.date + 'T00:00:00Z')) : '—'}</td>
       <td><button class="cell-button" data-filter="category" data-value="${escapeHtml(item.category)}">${escapeHtml(item.category)}</button></td>
       <td>${item.supplier ? `<button class="cell-button" data-filter="supplier" data-value="${escapeHtml(item.supplier)}">${escapeHtml(item.description || item.supplier)}</button>` : escapeHtml(item.description || '—')}</td>
-      <td>${escapeHtml(item.title || '—')}</td><td class="money">${money.format(amountDue(item))}</td>
+      <td>${escapeHtml(item.title || '—')}</td><td class="money">${money.format(item.value)}</td>
       <td class="status"><button class="pill cell-button" data-filter="status" data-value="${escapeHtml(status)}">${escapeHtml(status)}</button></td>
       <td>${item.code ? `<button class="copy" data-copy="${escapeHtml(item.code)}" title="Copiar código de pagamento">${escapeHtml(item.code)}</button>` : '—'}</td>
     </tr>`;
   }).join('');
   return `<section class="panel"><div class="card-heading"><h2>${title}</h2><span class="muted">${count.format(rows.length)} registros</span></div>
-    <p class="mobile-table-hint">Deslize a tabela para ver mais colunas.</p><div class="table-wrap" tabindex="0" aria-label="Tabela de lançamentos"><table><thead><tr><th>Vencimento</th><th>Categoria</th><th>Descrição</th><th>Nº do título</th><th>Valor a pagar</th><th>Status</th><th>Código de pagamento</th></tr></thead>
+    <p class="mobile-table-hint">Deslize a tabela para ver mais colunas.</p><div class="table-wrap" tabindex="0" aria-label="Tabela de lançamentos"><table><thead><tr><th>Vencimento</th><th>Categoria</th><th>Descrição</th><th>Nº do título</th><th>Valor</th><th>Status</th><th>Código de pagamento</th></tr></thead>
     <tbody>${body || '<tr><td colspan="7">Sem lançamentos para estes filtros.</td></tr>'}</tbody></table></div>
-    ${pages > 1 ? `<div class="pagination"><button data-step="-1" ${tablePage === 0 ? 'disabled' : ''}>Anterior</button><span>${tablePage + 1} de ${pages}</span><button data-step="1" ${tablePage + 1 === pages ? 'disabled' : ''}>Próxima</button></div>` : ''}
+    ${paginated && pages > 1 ? `<div class="pagination"><button data-step="-1" ${tablePage === 0 ? 'disabled' : ''}>Anterior</button><span>${tablePage + 1} de ${pages}</span><button data-step="1" ${tablePage + 1 === pages ? 'disabled' : ''}>Próxima</button></div>` : ''}
   </section>`;
 }
 
 function render() {
   const isBilling = page === 'billing';
-  document.body.dataset.page = page;
-  $('dashboard-filters').hidden = page === 'overview';
-  $('mobile-filter-toggle').hidden = page === 'overview';
-  $('extra-filter-count').textContent = ['month', 'status', 'search'].some(field => $(field).value) ? '(ativos)' : '';
   const activeFields = isBilling ? [...billingFilters, 'billing-search'] : [...filters, 'search'];
   const activeRange = isBilling ? billingDateRange : dateRange;
   const filterCount = activeFields.filter(field => $(field).value.trim()).length + Number(activeRange.length === 2);
@@ -258,14 +236,18 @@ function render() {
   $('date-filter').parentElement.classList.toggle('billing-filters', isBilling);
   for (const element of document.querySelectorAll('[data-payables]')) element.hidden = isBilling;
   for (const element of document.querySelectorAll('[data-billing]')) element.hidden = !isBilling;
-  $('report-footer').hidden = page !== 'entries';
+  // Visibilidade independente: somente a aba Visão geral exibe a exportação.
+  $('report-footer').hidden = page !== 'overview';
+  $('area').textContent = isBilling ? 'GESTÃO FISCAL' : 'CONTAS A PAGAR';
   $('date-label').textContent = isBilling ? 'Emissão' : 'Vencimento';
   $('date-calendar').setAttribute('aria-label', isBilling ? 'Calendário de emissão' : 'Calendário de vencimentos');
   $('report-export').disabled = !records.length || dateRange.length !== 2;
   $('report-hint').textContent = !records.length ? 'Selecione um período.'
     : dateRange.length !== 2 ? 'Selecione um Período.' : 'Relatório de contas a pagar';
   $('report-files').replaceChildren();
-  $('title').textContent = pageTitles[page];
+  $('title').textContent = descriptions[page][0];
+  $('subtitle').textContent = descriptions[page][1];
+  // O botão de carregar pertence à tela inicial e deve funcionar em qualquer aba.
   for (const button of document.querySelectorAll('nav button')) {
     if (button.dataset.page === page) button.setAttribute('aria-current', 'page');
     else button.removeAttribute('aria-current');
@@ -274,13 +256,16 @@ function render() {
     $('content').innerHTML = billingView();
     return;
   }
+  const rows = selectedRows();
   if (page === 'entries') {
-    $('content').innerHTML = entryTable(selectedRows(), 'Lançamentos');
-    return;
+    $('content').innerHTML = entryTable(rows, 'Todos os lançamentos', true);
+  } else {
+    $('content').innerHTML = metrics(rows) +
+      '<div class="grid overview-charts">' + chart('Valor por competência', 'month', grouped(rows, 'month', true)) +
+      statusChart(rows) + '</div>' +
+      '<div class="grid overview-breakdown">' + chart('Valor por categoria', 'category', grouped(rows, 'category')) +
+      chart('Principais fornecedores', 'supplier', grouped(rows, 'supplier').slice(0, 6)) + '</div>';
   }
-  $('content').innerHTML = metrics(records) + expenseTimeline(records) +
-    '<div class="grid overview-breakdown">' + chart('Total por categoria', 'category', grouped(records, 'category')) +
-    chart('Total por fornecedor', 'supplier', grouped(records, 'supplier')) + '</div>';
 }
 
 function notify(message) {
@@ -316,33 +301,10 @@ function resetFilters() {
   render();
 }
 
-const menuToggle = $('menu-toggle');
-const mobileMenu = matchMedia('(max-width: 780px)');
-function setMenuExpanded(expanded) {
-  $('sidebar').hidden = !expanded;
-  document.body.classList.toggle('menu-collapsed', !expanded);
-  menuToggle.setAttribute('aria-expanded', String(expanded));
-  menuToggle.setAttribute('aria-label', expanded ? 'Recolher menu' : 'Abrir menu');
-}
-setMenuExpanded(!mobileMenu.matches);
-mobileMenu.addEventListener('change', event => setMenuExpanded(!event.matches));
-menuToggle.addEventListener('click', () => setMenuExpanded($('sidebar').hidden));
-
-$('content').addEventListener('change', event => {
-  if (event.target.id !== 'overview-month') return;
-  overviewMonth = event.target.value;
-  render();
-  $('overview-month').focus();
-});
-
 document.querySelector('nav').addEventListener('click', event => {
   const button = event.target.closest('[data-page]');
   if (!button) return;
   page = button.dataset.page;
-  if (mobileMenu.matches) {
-    setMenuExpanded(false);
-    menuToggle.focus();
-  }
   closeCalendar();
   showDateValue();
   tablePage = 0;
@@ -352,14 +314,7 @@ $('content').addEventListener('click', event => {
   const button = event.target.closest('button');
   if (!button) return;
   const { filter, value, copy, step } = button.dataset;
-  if (filter) {
-    if (page === 'overview') {
-      for (const field of [...filters, 'search']) $(field).value = '';
-      clearDateRange();
-      page = 'entries';
-    }
-    updateFilter(filter, value);
-  }
+  if (filter) updateFilter(filter, value);
   else if (copy) copyCode(copy);
   else if (step) { tablePage += Number(step); render(); }
 });
@@ -395,7 +350,6 @@ $('file').addEventListener('change', async event => {
     }
     const payableRows = workbook.payables ? workbookRecords(workbook.payables) : [];
     const notes = workbook.billing ? workbookBilling(workbook.billing, workbook.items) : [];
-    overviewMonth = '';
     records = payableRows;
     billingRecords = notes;
     dateRange = [];
