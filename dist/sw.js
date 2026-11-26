@@ -1,7 +1,7 @@
 /* PWA isolado: NUNCA armazena planilhas Excel. */
-const CACHE_NAME = 'valefinance-pwa-20261124-noswitch';
+const CACHE_NAME = 'valefinance-pwa-dashboard-1';
 const SHELL = [
-  './index.html', './style.css', './welcome.css', './dark-teal.css', './sky-blue.css',
+  './index.html', './style.css', './welcome.css', './dark-teal.css', './sky-blue.css', './dashboard.css',
   './excel.js', './billing.js', './app.js', './calendar.js',
   './report.js', './pwa.js', './logotipo.jpeg', './manifest.webmanifest'
 ];
